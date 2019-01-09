@@ -3,3 +3,9 @@ Style/Documentation:
 
 Style/MutableConstant:
   Enabled: false
+
+Metrics/LineLength:
+  Max: 120
+
+Metrics/MethodLength:
+  Max: 80
