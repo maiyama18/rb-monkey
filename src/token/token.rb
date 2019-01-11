@@ -66,6 +66,6 @@ class Token
 
   # @return [String]
   def to_s
-    "{Token type=#{@type} literal=#{@literal}}"
+    "{Token type='#{@type}' literal='#{@literal}'}"
   end
 end
