@@ -56,6 +56,7 @@ class Parser
       identifier = Identifier.new(@current_token, @current_token.literal)
 
       expect_peek(TokenType::ASSIGN)
+      # TODO: parse expression
       until @current_token.type == TokenType::SEMICOLON
         consume_token
       end
@@ -66,6 +67,7 @@ class Parser
     def parse_return_statement
       token = @current_token
 
+      # TODO: parse expression
       until @current_token.type == TokenType::SEMICOLON
         consume_token
       end
