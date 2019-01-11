@@ -69,37 +69,39 @@ class Lexer
     token
   end
 
-  private def consume_char
-    @position += 1
-    @peek_position += 1
+  private
 
-    @char = @position >= @input.length ? '' : @input[@position]
-  end
+    def consume_char
+      @position += 1
+      @peek_position += 1
 
-  private def peek_char
-    @peek_position >= @input.length ? '' : @input[@peek_position]
-  end
-
-  private def skip_spaces
-    while SPACE_CHARS.include?(@char)
-      consume_char
+      @char = @position >= @input.length ? '' : @input[@position]
     end
-  end
 
-  private def read_integer
-    start = @position
-    consume_char while peek_char.match(/\d/)
+    def peek_char
+      @peek_position >= @input.length ? '' : @input[@peek_position]
+    end
 
-    Token.new(TokenType::INT, @input[start..@position])
-  end
+    def skip_spaces
+      while SPACE_CHARS.include?(@char)
+        consume_char
+      end
+    end
 
-  private def read_identifier
-    start = @position
-    consume_char while peek_char.match(/\w/)
+    def read_integer
+      start = @position
+      consume_char while peek_char.match(/\d/)
 
-    literal = @input[start..@position]
-    type = TokenType.from(literal)
+      Token.new(TokenType::INT, @input[start..@position])
+    end
 
-    Token.new(type, @input[start..@position])
-  end
+    def read_identifier
+      start = @position
+      consume_char while peek_char.match(/\w/)
+
+      literal = @input[start..@position]
+      type = TokenType.from(literal)
+
+      Token.new(type, @input[start..@position])
+    end
 end
