@@ -1,5 +1,6 @@
 require 'minitest/autorun'
 require_relative '../../lib/token/token'
+require_relative '../../lib/error/error'
 
 class TokenTest < Minitest::Test
   def test_token_initialization
@@ -13,7 +14,7 @@ class TokenTest < Minitest::Test
   end
 
   def test_invalid_token_initialization
-    err = assert_raises RuntimeError do
+    err = assert_raises InvalidTokenError do
       Token.new('INVALID_TOKEN_TYPE', 'invalid')
     end
 

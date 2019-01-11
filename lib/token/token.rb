@@ -1,3 +1,5 @@
+require_relative '../error/error'
+
 module TokenType
   ILLEGAL = 'ILLEGAL'
   EOF = 'EOF'
@@ -53,7 +55,7 @@ class Token
   # @param [String] type
   # @param [String] literal
   def initialize(type, literal)
-    raise "invalid token type #{type}" unless TokenType.constants.map {|constant| TokenType.const_get(constant)}.include?(type)
+    raise InvalidTokenError.new "invalid token type #{type}" unless TokenType.constants.map {|constant| TokenType.const_get(constant)}.include?(type)
 
     @type = type
     @literal = literal
