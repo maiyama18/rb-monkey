@@ -1,5 +1,5 @@
 require 'minitest/autorun'
-require_relative '../../src/lexer/lexer'
+require_relative '../../lib/lexer/lexer'
 
 class LexerTest < Minitest::Test
   def test_lex_single_char_tokens

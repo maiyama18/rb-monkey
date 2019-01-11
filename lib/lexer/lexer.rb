@@ -1,5 +1,5 @@
 require 'set'
-require_relative '../../src/token/token'
+require_relative '../../lib/token/token'
 
 class Lexer
   SPACE_CHARS = Set.new([' ', "\t", "\r", "\n"])

@@ -1,5 +1,5 @@
 require 'minitest/autorun'
-require_relative '../../src/token/token'
+require_relative '../../lib/token/token'
 
 class TokenTest < Minitest::Test
   def test_token_initialization

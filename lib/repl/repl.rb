@@ -1,5 +1,5 @@
-require_relative '../../src/lexer/lexer'
-require_relative '../../src/token/token'
+require_relative '../../lib/lexer/lexer'
+require_relative '../../lib/token/token'
 
 class Repl
   PROMPT = '-> '
