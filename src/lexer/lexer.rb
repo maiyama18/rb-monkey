@@ -2,7 +2,7 @@ require 'set'
 require_relative '../../src/token/token'
 
 class Lexer
-  SPACE_CHARS = Set.new([' ', '\t', '\r', '\n'])
+  SPACE_CHARS = Set.new([' ', "\t", "\r", "\n"])
 
   # @param [String] input
   def initialize(input)
@@ -14,32 +14,37 @@ class Lexer
 
   # @return [Token]
   def next_token
-    char = @char
-    consume_char
     skip_spaces
 
-    case char
+    case @char
     when '='
-      Token.new(TokenType::ASSIGN, '=')
+      token = Token.new(TokenType::ASSIGN, '=')
     when '+'
-      Token.new(TokenType::PLUS, '+')
+      token = Token.new(TokenType::PLUS, '+')
     when '('
-      Token.new(TokenType::LPAREN, '(')
+      token = Token.new(TokenType::LPAREN, '(')
     when ')'
-      Token.new(TokenType::RPAREN, ')')
+      token = Token.new(TokenType::RPAREN, ')')
     when '{'
-      Token.new(TokenType::LBRACE, '{')
+      token = Token.new(TokenType::LBRACE, '{')
     when '}'
-      Token.new(TokenType::RBRACE, '}')
+      token = Token.new(TokenType::RBRACE, '}')
     when ','
-      Token.new(TokenType::COMMA, ',')
+      token = Token.new(TokenType::COMMA, ',')
     when ';'
-      Token.new(TokenType::SEMICOLON, ';')
+      token = Token.new(TokenType::SEMICOLON, ';')
+    when /\d/
+      token = read_integer
+    when /\w/
+      token = read_identifier
     when ''
-      Token.new(TokenType::EOF, '')
+      token = Token.new(TokenType::EOF, '')
     else
-      Token.new(TokenType::ILLEGAL, '')
+      token = Token.new(TokenType::ILLEGAL, '')
     end
+
+    consume_char
+    token
   end
 
   private def consume_char
@@ -49,9 +54,30 @@ class Lexer
     @char = @position >= @input.length ? '' : @input[@position]
   end
 
+  private def peek_char
+    @peek_position >= @input.length ? '' : @input[@peek_position]
+  end
+
   private def skip_spaces
     while SPACE_CHARS.include?(@char)
       consume_char
     end
+  end
+
+  private def read_integer
+    start = @position
+    consume_char while peek_char.match(/\d/)
+
+    Token.new(TokenType::INT, @input[start..@position])
+  end
+
+  private def read_identifier
+    start = @position
+    consume_char while peek_char.match(/\w/)
+
+    literal = @input[start..@position]
+    type = TokenType.from(literal)
+
+    Token.new(type, @input[start..@position])
   end
 end

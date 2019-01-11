@@ -19,8 +19,21 @@ module TokenType
   RBRACE = '}'
 
   # keywords
-  FUNCTION = 'FUNCTION'
+  FN = 'FN'
   LET = 'LET'
+
+  # @param [String] literal
+  # @return [String]
+  def self.from(literal)
+    case literal
+    when 'let'
+      LET
+    when 'fn'
+      FN
+    else
+      IDENT
+    end
+  end
 end
 
 class Token
@@ -38,5 +51,10 @@ class Token
   # @return [True/False]
   def ==(other)
     @type == other.type && @literal == other.literal
+  end
+
+  # @return [String]
+  def to_s
+    "{Token type=#{@type} literal=#{@literal}}"
   end
 end
