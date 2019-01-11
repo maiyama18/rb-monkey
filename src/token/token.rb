@@ -13,6 +13,8 @@ module TokenType
   ASTERISK = '*'
   SLASH = '/'
 
+  EQ = '=='
+  NEQ = '!='
   BANG = '!'
   GT = '>'
   LT = '<'

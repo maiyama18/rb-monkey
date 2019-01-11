@@ -18,9 +18,19 @@ class Lexer
 
     case @char
     when '='
-      token = Token.new(TokenType::ASSIGN, '=')
+      if peek_char == '='
+        consume_char
+        token = Token.new(TokenType::EQ, '==')
+      else
+        token = Token.new(TokenType::ASSIGN, '=')
+      end
     when '!'
-      token = Token.new(TokenType::BANG, '!')
+      if peek_char == '='
+        consume_char
+        token = Token.new(TokenType::NEQ, '!=')
+      else
+        token = Token.new(TokenType::BANG, '!')
+      end
     when '>'
       token = Token.new(TokenType::GT, '>')
     when '<'

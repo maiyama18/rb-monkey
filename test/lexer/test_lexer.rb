@@ -29,6 +29,27 @@ class LexerTest < Minitest::Test
     end
   end
 
+  def test_lex_multiple_char_tokens
+    input = '3 == 3; 3 != 4;'
+    lexer = Lexer.new(input)
+
+    expected_tokens = [
+      Token.new(TokenType::INT, '3'),
+      Token.new(TokenType::EQ, '=='),
+      Token.new(TokenType::INT, '3'),
+      Token.new(TokenType::SEMICOLON, ';'),
+
+      Token.new(TokenType::INT, '3'),
+      Token.new(TokenType::NEQ, '!='),
+      Token.new(TokenType::INT, '4'),
+      Token.new(TokenType::SEMICOLON, ';'),
+    ]
+
+    expected_tokens.each do |expected_token|
+      assert_equal expected_token, lexer.next_token
+    end
+  end
+
   def test_lex_keywords_and_identifiers
     input = <<~INPUT
     let five = 5;
