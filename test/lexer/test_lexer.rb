@@ -59,7 +59,8 @@ class LexerTest < Minitest::Test
       x + y;
     };
 
-    let result = add(five, ten);
+    let result = if (ten > 9) { add(five, ten); } else { five; }
+    return result;
     INPUT
     lexer = Lexer.new(input)
 
@@ -96,12 +97,29 @@ class LexerTest < Minitest::Test
       Token.new(TokenType::LET, 'let'),
       Token.new(TokenType::IDENT, 'result'),
       Token.new(TokenType::ASSIGN, '='),
+      Token.new(TokenType::IF, 'if'),
+      Token.new(TokenType::LPAREN, '('),
+      Token.new(TokenType::IDENT, 'ten'),
+      Token.new(TokenType::GT, '>'),
+      Token.new(TokenType::INT, '9'),
+      Token.new(TokenType::RPAREN, ')'),
+      Token.new(TokenType::LBRACE, '{'),
       Token.new(TokenType::IDENT, 'add'),
       Token.new(TokenType::LPAREN, '('),
       Token.new(TokenType::IDENT, 'five'),
       Token.new(TokenType::COMMA, ','),
       Token.new(TokenType::IDENT, 'ten'),
       Token.new(TokenType::RPAREN, ')'),
+      Token.new(TokenType::SEMICOLON, ';'),
+      Token.new(TokenType::RBRACE, '}'),
+      Token.new(TokenType::ELSE, 'else'),
+      Token.new(TokenType::LBRACE, '{'),
+      Token.new(TokenType::IDENT, 'five'),
+      Token.new(TokenType::SEMICOLON, ';'),
+      Token.new(TokenType::RBRACE, '}'),
+
+      Token.new(TokenType::RETURN, 'return'),
+      Token.new(TokenType::IDENT, 'result'),
       Token.new(TokenType::SEMICOLON, ';'),
 
       Token.new(TokenType::EOF, ''),

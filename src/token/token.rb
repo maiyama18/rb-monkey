@@ -30,18 +30,20 @@ module TokenType
   # keywords
   FN = 'FN'
   LET = 'LET'
+  IF = 'IF'
+  ELSE = 'ELSE'
+  RETURN = 'RETURN'
 
   # @param [String] literal
   # @return [String]
   def self.from(literal)
-    case literal
-    when 'let'
-      LET
-    when 'fn'
-      FN
-    else
-      IDENT
-    end
+    {
+      'let' => LET,
+      'fn' => FN,
+      'if' => IF,
+      'else' => ELSE,
+      'return' => RETURN,
+    }[literal] || IDENT
   end
 end
 
