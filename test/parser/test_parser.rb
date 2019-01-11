@@ -17,7 +17,7 @@ class ParserTest < Minitest::Test
     assert_instance_of LetStatement, program.statements[0]
     assert_equal 'x', program.statements[0].identifier.name
 
-    assert_instance_of LetStatement, program.statements[0]
+    assert_instance_of LetStatement, program.statements[1]
     assert_equal 'foo', program.statements[1].identifier.name
   end
 
