@@ -4,10 +4,13 @@ require_relative '../../src/token/token'
 
 class TokenTest < Minitest::Test
   def test_token_initialization
-    token = Token.new(TokenType::IDENT, 'foo')
+    ident_token = Token.new(TokenType::IDENT, 'foo')
+    assert_equal TokenType::IDENT, ident_token.type
+    assert_equal 'foo', ident_token.literal
 
-    assert_equal TokenType::IDENT, token.type
-    assert_equal 'foo', token.literal
+    assign_token = Token.new(TokenType::ASSIGN, '=')
+    assert_equal TokenType::ASSIGN, assign_token.type
+    assert_equal '=', assign_token.literal
   end
 
   def test_invalid_token_initialization
