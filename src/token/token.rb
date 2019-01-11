@@ -9,6 +9,13 @@ module TokenType
   # operators
   ASSIGN = '='
   PLUS = '+'
+  MINUS = '-'
+  ASTERISK = '*'
+  SLASH = '/'
+
+  BANG = '!'
+  GT = '>'
+  LT = '<'
 
   # delimiters
   COMMA = ','

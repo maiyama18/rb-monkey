@@ -19,8 +19,20 @@ class Lexer
     case @char
     when '='
       token = Token.new(TokenType::ASSIGN, '=')
+    when '!'
+      token = Token.new(TokenType::BANG, '!')
+    when '>'
+      token = Token.new(TokenType::GT, '>')
+    when '<'
+      token = Token.new(TokenType::LT, '<')
     when '+'
       token = Token.new(TokenType::PLUS, '+')
+    when '-'
+      token = Token.new(TokenType::MINUS, '-')
+    when '*'
+      token = Token.new(TokenType::ASTERISK, '*')
+    when '/'
+      token = Token.new(TokenType::SLASH, '/')
     when '('
       token = Token.new(TokenType::LPAREN, '(')
     when ')'

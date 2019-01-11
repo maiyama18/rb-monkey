@@ -3,12 +3,18 @@ require_relative '../../src/lexer/lexer'
 
 class LexerTest < Minitest::Test
   def test_lex_single_char_tokens
-    input = '=+(){},;'
+    input = '=+-*/!><(){},;'
     lexer = Lexer.new(input)
 
     expected_tokens = [
       Token.new(TokenType::ASSIGN, '='),
       Token.new(TokenType::PLUS, '+'),
+      Token.new(TokenType::MINUS, '-'),
+      Token.new(TokenType::ASTERISK, '*'),
+      Token.new(TokenType::SLASH, '/'),
+      Token.new(TokenType::BANG, '!'),
+      Token.new(TokenType::GT, '>'),
+      Token.new(TokenType::LT, '<'),
       Token.new(TokenType::LPAREN, '('),
       Token.new(TokenType::RPAREN, ')'),
       Token.new(TokenType::LBRACE, '{'),
