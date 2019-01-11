@@ -1,5 +1,4 @@
 require 'minitest/autorun'
-require_relative '../../src/token/token_type'
 require_relative '../../src/token/token'
 
 class TokenTest < Minitest::Test
