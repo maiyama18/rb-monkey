@@ -11,3 +11,12 @@ class LetStatement < Statement
     @expression = expression
   end
 end
+
+class ReturnStatement < Statement
+  attr_accessor :identifier, :expression
+
+  def initialize(token, expression)
+    @token = token
+    @expression = expression
+  end
+end

@@ -42,6 +42,8 @@ class Parser
       case @current_token.type
       when TokenType::LET
         parse_let_statement
+      when TokenType::RETURN
+        parse_return_statement
       else
         raise ParseError.new "unexpected token: #{@current_token}"
       end
@@ -59,5 +61,15 @@ class Parser
       end
 
       LetStatement.new(token, identifier, nil)
+    end
+
+    def parse_return_statement
+      token = @current_token
+
+      until @current_token.type == TokenType::SEMICOLON
+        consume_token
+      end
+
+      ReturnStatement.new(token, nil)
     end
 end

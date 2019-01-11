@@ -10,13 +10,27 @@ class ParserTest < Minitest::Test
 
     lexer = Lexer.new(input)
     parser = Parser.new(lexer)
-
     program = parser.parse_program
 
     assert_equal 2, program.statements.length
 
+    assert_instance_of LetStatement, program.statements[0]
     assert_equal 'x', program.statements[0].identifier.name
+
+    assert_instance_of LetStatement, program.statements[0]
     assert_equal 'foo', program.statements[1].identifier.name
+  end
+
+  def test_return_statement
+    input = 'return x;'
+
+    lexer = Lexer.new(input)
+    parser = Parser.new(lexer)
+    program = parser.parse_program
+
+    assert_equal 1, program.statements.length
+
+    assert_instance_of ReturnStatement, program.statements[0]
   end
 
   def test_parse_error
