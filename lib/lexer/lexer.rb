@@ -2,11 +2,9 @@ require 'set'
 require_relative '../../lib/token/token'
 
 class Lexer
-  SPACE_CHARS = Set.new([' ', "\t", "\r", "\n"])
-
   # @param [String] input
   def initialize(input)
-    @input = input
+    @input = input.tr("\t\r\n", " ").squeeze(" ")
     @position = 0
     @peek_position = 1
     @char = input.length.zero? ? '' : input[0]
@@ -83,9 +81,7 @@ class Lexer
     end
 
     def skip_spaces
-      while SPACE_CHARS.include?(@char)
-        consume_char
-      end
+      consume_char while @char == " "
     end
 
     def read_integer
