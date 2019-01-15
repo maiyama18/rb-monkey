@@ -4,6 +4,16 @@ require_relative '../ast/statement'
 require_relative '../ast/program'
 require_relative '../error/error'
 
+module Precedence
+  LOWEST = 0
+  EQUAL = 1
+  COMPARISON = 2
+  SUM = 3
+  PRODUCT = 4
+  PREFIX = 5
+  CALL = 6
+end
+
 class Parser
   # @param [Lexer] lexer
   def initialize(lexer)
@@ -13,6 +23,10 @@ class Parser
 
     consume_token
     consume_token
+
+    @prefix_fns = {
+      TokenType::IDENT => parse_identifier
+    }
   end
 
   def parse_program
@@ -45,7 +59,7 @@ class Parser
       when TokenType::RETURN
         parse_return_statement
       else
-        raise ParseError.new "unexpected token: #{@current_token}"
+        parse_expression_statement
       end
     end
 
@@ -73,5 +87,31 @@ class Parser
       end
 
       ReturnStatement.new(token, nil)
+    end
+
+    def parse_expression_statement
+      token = @current_token
+
+      expression = parse_expression(Precedence::LOWEST)
+
+      consume_token if @peek_token.type == TokenType::SEMICOLON
+
+      ExpressionStatement.new(token, expression)
+    end
+
+    def parse_expression(precedence)
+      prefix_fn = @prefix_fns[@current_token.type]
+
+      throw NoParseFunctionError.new(
+        `parser has no function to parse token type #{@current_token.type}`
+      ) if prefix_fn.nil?
+
+      left = prefix_fn
+
+      left
+    end
+
+    def parse_identifier
+      Identifier.new(@current_token, @current_token.literal)
     end
 end

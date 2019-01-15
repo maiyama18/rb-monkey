@@ -29,8 +29,21 @@ class ParserTest < Minitest::Test
     program = parser.parse_program
 
     assert_equal 1, program.statements.length
-
     assert_instance_of ReturnStatement, program.statements[0]
+  end
+
+  def test_identifier_expression
+    input = 'foo;'
+
+    lexer = Lexer.new(input)
+    parser = Parser.new(lexer)
+    program = parser.parse_program
+
+    assert_equal 1, program.statements.length
+    assert_instance_of ExpressionStatement, program.statements[0]
+
+    assert_instance_of Identifier, program.statements[0].expression
+    assert_equal 'foo', program.statements[0].expression.name
   end
 
   def test_parse_error

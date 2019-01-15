@@ -3,3 +3,6 @@ end
 
 class InvalidTokenError < StandardError
 end
+
+class NoParseFunctionError < StandardError
+end
