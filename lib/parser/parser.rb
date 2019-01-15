@@ -23,11 +23,6 @@ class Parser
 
     consume_token
     consume_token
-
-    @prefix_fns = {
-      TokenType::IDENT => parse_identifier,
-      TokenType::INT => parse_integer_literal,
-    }
   end
 
   def parse_program
@@ -41,82 +36,95 @@ class Parser
 
   private
 
-    def consume_token
-      @current_token = @peek_token
-      @peek_token = @lexer.next_token
+  def consume_token
+    @current_token = @peek_token
+    @peek_token = @lexer.next_token
+  end
 
+  def expect_peek(type)
+    raise ParseError.new "expect token type #{type}, but got token #{@peek_token}" if type != @peek_token.type
+
+    consume_token
+  end
+
+  def parse_statement
+    case @current_token.type
+    when TokenType::LET
+      parse_let_statement
+    when TokenType::RETURN
+      parse_return_statement
+    else
+      parse_expression_statement
     end
+  end
 
-    def expect_peek(type)
-      raise ParseError.new "expect token type #{type}, but got token #{@peek_token}" if type != @peek_token.type
+  def parse_let_statement
+    token = @current_token
 
+    expect_peek(TokenType::IDENT)
+    identifier = Identifier.new(@current_token, @current_token.literal)
+
+    expect_peek(TokenType::ASSIGN)
+    # TODO: parse expression
+    until @current_token.type == TokenType::SEMICOLON
       consume_token
     end
 
-    def parse_statement
-      case @current_token.type
-      when TokenType::LET
-        parse_let_statement
-      when TokenType::RETURN
-        parse_return_statement
-      else
-        parse_expression_statement
-      end
+    LetStatement.new(token, identifier, nil)
+  end
+
+  def parse_return_statement
+    token = @current_token
+
+    # TODO: parse expression
+    until @current_token.type == TokenType::SEMICOLON
+      consume_token
     end
 
-    def parse_let_statement
-      token = @current_token
+    ReturnStatement.new(token, nil)
+  end
 
-      expect_peek(TokenType::IDENT)
-      identifier = Identifier.new(@current_token, @current_token.literal)
+  def parse_expression_statement
+    token = @current_token
 
-      expect_peek(TokenType::ASSIGN)
-      # TODO: parse expression
-      until @current_token.type == TokenType::SEMICOLON
-        consume_token
-      end
+    expression = parse_expression(Precedence::LOWEST)
 
-      LetStatement.new(token, identifier, nil)
-    end
+    consume_token if @peek_token.type == TokenType::SEMICOLON
 
-    def parse_return_statement
-      token = @current_token
+    ExpressionStatement.new(token, expression)
+  end
 
-      # TODO: parse expression
-      until @current_token.type == TokenType::SEMICOLON
-        consume_token
-      end
+  def parse_expression(precedence)
+    prefix_fn = case @current_token.type
+                when TokenType::IDENT
+                  parse_identifier
+                when TokenType::INT
+                  parse_integer_literal
+                when TokenType::BANG, TokenType::MINUS
+                  parse_prefix_expression
+                else
+                  throw NoParseFunctionError.new("parser has no function to parse token type #{@current_token.type}")
+                end
 
-      ReturnStatement.new(token, nil)
-    end
+    left = prefix_fn
 
-    def parse_expression_statement
-      token = @current_token
+    left
+  end
 
-      expression = parse_expression(Precedence::LOWEST)
+  def parse_identifier
+    Identifier.new(@current_token, @current_token.literal)
+  end
 
-      consume_token if @peek_token.type == TokenType::SEMICOLON
+  def parse_integer_literal
+    IntegerLiteral.new(@current_token, @current_token.literal.to_i)
+  end
 
-      ExpressionStatement.new(token, expression)
-    end
+  def parse_prefix_expression
+    token = @current_token
+    operator = @current_token.literal
+    consume_token
+    right = parse_expression(Precedence::PREFIX)
 
-    def parse_expression(precedence)
-      prefix_fn = @prefix_fns[@current_token.type]
-
-      throw NoParseFunctionError.new(
-        `parser has no function to parse token type #{@current_token.type}`
-      ) if prefix_fn.nil?
-
-      left = prefix_fn
-
-      left
-    end
-
-    def parse_identifier
-      Identifier.new(@current_token, @current_token.literal)
-    end
-
-    def parse_integer_literal
-      IntegerLiteral.new(@current_token, @current_token.literal.to_i)
-    end
+    PrefixExpression.new(token, operator, right)
+  end
 end

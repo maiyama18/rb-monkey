@@ -55,6 +55,32 @@ class ParserTest < Minitest::Test
     assert_equal 42, program.statements[0].expression.value
   end
 
+  def test_minus_expression
+    input = '-42;'
+    program = parse_program(input)
+
+    assert_equal 1, program.statements.length
+    assert_instance_of ExpressionStatement, program.statements[0]
+
+    exp = program.statements[0].expression
+    assert_instance_of PrefixExpression, exp
+    assert_equal '-', exp.operator
+    assert_equal 42, exp.right.value
+  end
+
+  def test_bang_expression
+    input = '!42;'
+    program = parse_program(input)
+
+    assert_equal 1, program.statements.length
+    assert_instance_of ExpressionStatement, program.statements[0]
+
+    exp = program.statements[0].expression
+    assert_instance_of PrefixExpression, exp
+    assert_equal '!', exp.operator
+    assert_equal 42, exp.right.value
+  end
+
   def test_parse_error
     input = 'let x 5;'
 

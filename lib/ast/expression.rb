@@ -35,3 +35,20 @@ class IntegerLiteral < Expression
     @value.to_s
   end
 end
+
+class PrefixExpression < Expression
+  attr_accessor :operator, :right
+
+  # @param [Token] token
+  # @param [String] operator
+  # @param [Expression] right
+  def initialize(token, operator, right)
+    @token = token
+    @operator = operator
+    @right = right
+  end
+
+  def to_s
+    "#{@operator}#{@right}"
+  end
+end
