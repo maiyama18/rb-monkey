@@ -119,6 +119,8 @@ class Parser
              parse_identifier
            when TokenType::INT
              parse_integer_literal
+           when TokenType::TRUE, TokenType::FALSE
+             parse_boolean_literal
            when TokenType::BANG, TokenType::MINUS
              parse_prefix_expression
            else
@@ -144,6 +146,10 @@ class Parser
 
   def parse_integer_literal
     IntegerLiteral.new(@current_token, @current_token.literal.to_i)
+  end
+
+  def parse_boolean_literal
+    BooleanLiteral.new(@current_token, @current_token.literal == 'true')
   end
 
   def parse_prefix_expression

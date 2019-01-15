@@ -36,6 +36,22 @@ class IntegerLiteral < Expression
   end
 end
 
+class BooleanLiteral < Expression
+  attr_accessor :value
+
+  # @param [Token] token
+  # @param [TrueClass/FalseClass] value
+  def initialize(token, value)
+    @token = token
+    @value = value
+  end
+
+  # @return [String]
+  def to_s
+    @value.to_s
+  end
+end
+
 class PrefixExpression < Expression
   attr_accessor :operator, :right
 
@@ -71,3 +87,4 @@ class InfixExpression < Expression
     "(#{@left} #{@operator} #{@right})"
   end
 end
+

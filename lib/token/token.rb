@@ -32,6 +32,8 @@ module TokenType
   # keywords
   FN = 'FN'
   LET = 'LET'
+  TRUE = 'TRUE'
+  FALSE = 'FALSE'
   IF = 'IF'
   ELSE = 'ELSE'
   RETURN = 'RETURN'
@@ -40,8 +42,10 @@ module TokenType
   # @return [String]
   def self.from(literal)
     {
-      'let' => LET,
       'fn' => FN,
+      'let' => LET,
+      'true' => TRUE,
+      'false' => FALSE,
       'if' => IF,
       'else' => ELSE,
       'return' => RETURN,

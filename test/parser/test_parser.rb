@@ -81,10 +81,12 @@ class ParserTest < Minitest::Test
       11 != 12;
       13 > 14;
       15 < 16;
+      true == true
+      true != false
     INPUT
     program = parse_program(input)
 
-    assert_equal 8, program.statements.length
+    assert_equal 10, program.statements.length
 
     program.statements.each do |statement|
       assert_instance_of ExpressionStatement, statement
@@ -98,6 +100,8 @@ class ParserTest < Minitest::Test
     test_infix_expression(11, '!=', 12, program.statements[5].expression)
     test_infix_expression(13, '>', 14, program.statements[6].expression)
     test_infix_expression(15, '<', 16, program.statements[7].expression)
+    test_infix_expression(true, '==', true, program.statements[8].expression)
+    test_infix_expression(true, '!=', false, program.statements[9].expression)
   end
 
   def test_parse_infix_with_precedence
@@ -107,16 +111,20 @@ class ParserTest < Minitest::Test
       a + b + c
       a * b + c
       a + b * c
+      !false
+      !!true
     INPUT
     program = parse_program(input)
 
-    assert_equal 5, program.statements.length
+    assert_equal 7, program.statements.length
 
     assert_equal '((-a) * b)', program.statements[0].to_s
     assert_equal '(!(-a))', program.statements[1].to_s
     assert_equal '((a + b) + c)', program.statements[2].to_s
     assert_equal '((a * b) + c)', program.statements[3].to_s
     assert_equal '(a + (b * c))', program.statements[4].to_s
+    assert_equal '(!false)', program.statements[5].to_s
+    assert_equal '(!(!true))', program.statements[6].to_s
   end
 
   def test_parse_error
@@ -131,16 +139,29 @@ class ParserTest < Minitest::Test
 
   private
 
-  def test_prefix_expression(operator, right_value, actual)
-    assert_instance_of PrefixExpression, actual
-    assert_equal operator, actual.operator
-    assert_equal right_value, actual.right.value
+  def test_prefix_expression(operator, expected_right, expression)
+    assert_instance_of PrefixExpression, expression
+    assert_equal operator, expression.operator
+    test_literal_expression(expected_right, expression.right)
   end
 
-  def test_infix_expression(left_value, operator, right_value, actual)
-    assert_instance_of InfixExpression, actual
-    assert_equal left_value, actual.left.value
-    assert_equal operator, actual.operator
-    assert_equal right_value, actual.right.value
+  def test_infix_expression(expected_left, operator, expected_right, expression)
+    assert_instance_of InfixExpression, expression
+    test_literal_expression(expected_left, expression.left)
+    assert_equal operator, expression.operator
+    test_literal_expression(expected_right, expression.right)
+  end
+
+  def test_literal_expression(expected, expression)
+    case expected
+    when Integer
+      assert_equal expected, expression.value
+    when String
+      assert_equal expected, expression.name
+    when TrueClass, FalseClass
+      assert_equal expected, expression.value
+    else
+      raise 'unknown class in test_literal_expression'
+    end
   end
 end
