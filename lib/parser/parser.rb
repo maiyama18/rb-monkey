@@ -25,7 +25,8 @@ class Parser
     consume_token
 
     @prefix_fns = {
-      TokenType::IDENT => parse_identifier
+      TokenType::IDENT => parse_identifier,
+      TokenType::INT => parse_integer_literal,
     }
   end
 
@@ -113,5 +114,9 @@ class Parser
 
     def parse_identifier
       Identifier.new(@current_token, @current_token.literal)
+    end
+
+    def parse_integer_literal
+      IntegerLiteral.new(@current_token, @current_token.literal.to_i)
     end
 end

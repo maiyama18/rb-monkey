@@ -46,6 +46,20 @@ class ParserTest < Minitest::Test
     assert_equal 'foo', program.statements[0].expression.name
   end
 
+  def test_integer_literal_expression
+    input = '42;'
+
+    lexer = Lexer.new(input)
+    parser = Parser.new(lexer)
+    program = parser.parse_program
+
+    assert_equal 1, program.statements.length
+    assert_instance_of ExpressionStatement, program.statements[0]
+
+    assert_instance_of IntegerLiteral, program.statements[0].expression
+    assert_equal 42, program.statements[0].expression.value
+  end
+
   def test_parse_error
     input = 'let x 5;'
 
