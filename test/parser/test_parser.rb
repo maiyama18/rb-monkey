@@ -2,15 +2,19 @@ require 'minitest/autorun'
 require_relative '../../lib/parser/parser'
 
 class ParserTest < Minitest::Test
+  # @return [Programt]
+  def parse_program(input)
+    lexer = Lexer.new(input)
+    parser = Parser.new(lexer)
+    parser.parse_program
+  end
+
   def test_let_statement
     input = <<~INPUT
     let x = 5;
     let foo = 42;
     INPUT
-
-    lexer = Lexer.new(input)
-    parser = Parser.new(lexer)
-    program = parser.parse_program
+    program = parse_program(input)
 
     assert_equal 2, program.statements.length
 
@@ -23,10 +27,7 @@ class ParserTest < Minitest::Test
 
   def test_return_statement
     input = 'return x;'
-
-    lexer = Lexer.new(input)
-    parser = Parser.new(lexer)
-    program = parser.parse_program
+    program = parse_program(input)
 
     assert_equal 1, program.statements.length
     assert_instance_of ReturnStatement, program.statements[0]
@@ -34,10 +35,7 @@ class ParserTest < Minitest::Test
 
   def test_identifier_expression
     input = 'foo;'
-
-    lexer = Lexer.new(input)
-    parser = Parser.new(lexer)
-    program = parser.parse_program
+    program = parse_program(input)
 
     assert_equal 1, program.statements.length
     assert_instance_of ExpressionStatement, program.statements[0]
@@ -48,10 +46,7 @@ class ParserTest < Minitest::Test
 
   def test_integer_literal_expression
     input = '42;'
-
-    lexer = Lexer.new(input)
-    parser = Parser.new(lexer)
-    program = parser.parse_program
+    program = parse_program(input)
 
     assert_equal 1, program.statements.length
     assert_instance_of ExpressionStatement, program.statements[0]
@@ -63,11 +58,8 @@ class ParserTest < Minitest::Test
   def test_parse_error
     input = 'let x 5;'
 
-    lexer = Lexer.new(input)
-    parser = Parser.new(lexer)
-
     err = assert_raises ParseError do
-      parser.parse_program
+      parse_program(input)
     end
 
     assert err.message.include?('expect token type')
