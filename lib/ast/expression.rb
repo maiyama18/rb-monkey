@@ -49,6 +49,25 @@ class PrefixExpression < Expression
   end
 
   def to_s
-    "#{@operator}#{@right}"
+    "(#{@operator}#{@right})"
+  end
+end
+
+class InfixExpression < Expression
+  attr_accessor :left, :operator, :right
+
+  # @param [Token] token
+  # @param [Expression] left
+  # @param [String] operator
+  # @param [Expression] right
+  def initialize(token, left, operator, right)
+    @token = token
+    @left = left
+    @operator = operator
+    @right = right
+  end
+
+  def to_s
+    "(#{@left} #{@operator} #{@right})"
   end
 end

@@ -12,6 +12,21 @@ module Precedence
   PRODUCT = 4
   PREFIX = 5
   CALL = 6
+
+  def self.from(token_type)
+    case token_type
+    when TokenType::EQ, TokenType::NEQ
+      EQUAL
+    when TokenType::GT, TokenType::LT
+      COMPARISON
+    when TokenType::PLUS, TokenType::MINUS
+      SUM
+    when TokenType::ASTERISK, TokenType::SLASH
+      PRODUCT
+    else
+      LOWEST
+    end
+  end
 end
 
 class Parser
@@ -45,6 +60,10 @@ class Parser
     raise ParseError.new "expect token type #{type}, but got token #{@peek_token}" if type != @peek_token.type
 
     consume_token
+  end
+
+  def peek_precedence
+    Precedence.from(@peek_token.type)
   end
 
   def parse_statement
@@ -95,18 +114,26 @@ class Parser
   end
 
   def parse_expression(precedence)
-    prefix_fn = case @current_token.type
-                when TokenType::IDENT
-                  parse_identifier
-                when TokenType::INT
-                  parse_integer_literal
-                when TokenType::BANG, TokenType::MINUS
-                  parse_prefix_expression
-                else
-                  throw NoParseFunctionError.new("parser has no function to parse token type #{@current_token.type}")
-                end
+    left = case @current_token.type
+           when TokenType::IDENT
+             parse_identifier
+           when TokenType::INT
+             parse_integer_literal
+           when TokenType::BANG, TokenType::MINUS
+             parse_prefix_expression
+           else
+             throw NoParseFunctionError.new("parser has no function to parse prefix token type #{@current_token.type}")
+           end
 
-    left = prefix_fn
+    while precedence < peek_precedence
+      consume_token
+      left = case @current_token.type
+             when TokenType::EQ, TokenType::NEQ, TokenType::GT, TokenType::LT, TokenType::PLUS, TokenType::MINUS, TokenType::ASTERISK, TokenType::SLASH
+               parse_infix_expression(left)
+             else
+               throw NoParseFunctionError.new("parser has no function to parse infix token type #{@current_token.type}")
+             end
+    end
 
     left
   end
@@ -126,5 +153,14 @@ class Parser
     right = parse_expression(Precedence::PREFIX)
 
     PrefixExpression.new(token, operator, right)
+  end
+
+  def parse_infix_expression(left)
+    token = @current_token
+    operator = @current_token.literal
+    consume_token
+    right = parse_expression(Precedence.from(token.type))
+
+    InfixExpression.new(token, left, operator, right)
   end
 end
