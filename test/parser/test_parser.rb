@@ -127,6 +127,27 @@ class ParserTest < Minitest::Test
     assert_equal '(!(!true))', program.statements[6].to_s
   end
 
+  def test_parse_grouped_infix_with_precedence
+    input = <<~INPUT
+      (a + b) + c;
+      (a + b) * c;
+      a + (b + c);
+      a + (b * c);
+      a * (b + c) / d;
+      !(true == true);
+    INPUT
+    program = parse_program(input)
+
+    assert_equal 6, program.statements.length
+
+    assert_equal '((a + b) + c)', program.statements[0].to_s
+    assert_equal '((a + b) * c)', program.statements[1].to_s
+    assert_equal '(a + (b + c))', program.statements[2].to_s
+    assert_equal '(a + (b * c))', program.statements[3].to_s
+    assert_equal '((a * (b + c)) / d)', program.statements[4].to_s
+    assert_equal '(!(true == true))', program.statements[5].to_s
+  end
+
   def test_parse_error
     input = 'let x 5;'
 

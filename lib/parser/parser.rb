@@ -123,6 +123,8 @@ class Parser
              parse_boolean_literal
            when TokenType::BANG, TokenType::MINUS
              parse_prefix_expression
+           when TokenType::LPAREN
+             parse_grouped_expression
            else
              throw NoParseFunctionError.new("parser has no function to parse prefix token type #{@current_token.type}")
            end
@@ -168,5 +170,14 @@ class Parser
     right = parse_expression(Precedence.from(token.type))
 
     InfixExpression.new(token, left, operator, right)
+  end
+
+  def parse_grouped_expression
+    consume_token
+    expression = parse_expression(Precedence::LOWEST)
+
+    expect_peek(TokenType::RPAREN)
+
+    expression
   end
 end
