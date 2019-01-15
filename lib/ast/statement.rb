@@ -43,3 +43,16 @@ class ExpressionStatement < Statement
     "#{@expression}"
   end
 end
+
+class BlockStatement < Statement
+  attr_accessor :statements
+
+  def initialize(token, statements)
+    @token = token
+    @statements = statements
+  end
+
+  def to_s
+    @statements.map(:to_s).join
+  end
+end

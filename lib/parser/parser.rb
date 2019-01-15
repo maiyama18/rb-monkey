@@ -66,6 +66,18 @@ class Parser
     Precedence.from(@peek_token.type)
   end
 
+  def parse_block_statement
+    token = @current_token
+    consume_token
+
+    statements = []
+    until @current_token.type == TokenType::RBRACE
+      statements << parse_statement
+      consume_token
+    end
+    BlockStatement.new(token, statements)
+  end
+
   def parse_statement
     case @current_token.type
     when TokenType::LET
@@ -125,6 +137,8 @@ class Parser
              parse_prefix_expression
            when TokenType::LPAREN
              parse_grouped_expression
+           when TokenType::IF
+             parse_if_expression
            else
              throw NoParseFunctionError.new("parser has no function to parse prefix token type #{@current_token.type}")
            end
@@ -180,4 +194,25 @@ class Parser
 
     expression
   end
+
+  def parse_if_expression
+    token = @current_token
+
+    expect_peek(TokenType::LPAREN)
+    consume_token
+    condition = parse_expression(Precedence::LOWEST)
+    expect_peek(TokenType::RPAREN)
+
+    expect_peek(TokenType::LBRACE)
+    consequence = parse_block_statement
+
+    return IfExpression.new(token, condition, consequence, nil) unless @peek_token.type == TokenType::ELSE
+
+    expect_peek(TokenType::ELSE)
+    expect_peek(TokenType::LBRACE)
+    alternative = parse_block_statement
+
+    IfExpression.new(token, condition, consequence, alternative)
+  end
+
 end

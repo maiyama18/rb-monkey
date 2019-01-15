@@ -148,6 +148,50 @@ class ParserTest < Minitest::Test
     assert_equal '(!(true == true))', program.statements[5].to_s
   end
 
+  def test_parse_if_expression
+    input = 'if (a > b) { c }'
+    program = parse_program(input)
+
+    assert_equal 1, program.statements.length
+
+    assert_instance_of ExpressionStatement, program.statements[0]
+    assert_instance_of IfExpression, program.statements[0].expression
+
+    exp = program.statements[0].expression
+    test_infix_expression('a', '>', 'b', exp.condition)
+
+    assert_instance_of BlockStatement, exp.consequence
+    assert_equal 1, exp.consequence.statements.length
+    assert_instance_of ExpressionStatement, exp.consequence.statements[0]
+    assert_instance_of Identifier, exp.consequence.statements[0].expression
+    test_literal_expression 'c', exp.consequence.statements[0].expression
+  end
+
+  def test_parse_if_expression
+    input = 'if (true) { 10 } else { 5 + 6 }'
+    program = parse_program(input)
+
+    assert_equal 1, program.statements.length
+
+    assert_instance_of ExpressionStatement, program.statements[0]
+    assert_instance_of IfExpression, program.statements[0].expression
+
+    exp = program.statements[0].expression
+    test_literal_expression(true, exp.condition)
+
+    assert_instance_of BlockStatement, exp.consequence
+    assert_equal 1, exp.consequence.statements.length
+    assert_instance_of ExpressionStatement, exp.consequence.statements[0]
+    assert_instance_of IntegerLiteral, exp.consequence.statements[0].expression
+    test_literal_expression 10, exp.consequence.statements[0].expression
+
+    assert_instance_of BlockStatement, exp.alternative
+    assert_equal 1, exp.alternative.statements.length
+    assert_instance_of ExpressionStatement, exp.alternative.statements[0]
+    assert_instance_of InfixExpression, exp.alternative.statements[0].expression
+    test_infix_expression(5, '+', 6, exp.alternative.statements[0].expression)
+  end
+
   def test_parse_error
     input = 'let x 5;'
 

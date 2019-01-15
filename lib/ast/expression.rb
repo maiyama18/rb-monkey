@@ -88,3 +88,22 @@ class InfixExpression < Expression
   end
 end
 
+class IfExpression < Expression
+  attr_accessor :condition, :consequence, :alternative
+
+  # @param [Token] token
+  # @param [Expression] condition
+  # @param [BlockStatement] consequence
+  # @param [BlockStatement] alternative
+  def initialize(token, condition, consequence, alternative = nil)
+    @token = token
+    @condition = condition
+    @consequence = consequence
+    @alternative = alternative
+  end
+
+  def to_s
+    s = "if #{@condition} #{@consequence}"
+    @alternative ? s += " else #{@alternative}" : s
+  end
+end
