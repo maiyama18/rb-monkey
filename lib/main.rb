@@ -1,3 +1,5 @@
 require_relative 'repl/repl'
 
-Repl.new.start
+module RMonkey
+  Repl.new.start
+end
