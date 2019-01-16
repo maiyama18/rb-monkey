@@ -24,6 +24,8 @@ module Precedence
       SUM
     when TokenType::ASTERISK, TokenType::SLASH
       PRODUCT
+    when TokenType::LPAREN
+      CALL
     else
       LOWEST
     end
@@ -153,6 +155,8 @@ class Parser
       left = case @current_token.type
              when TokenType::EQ, TokenType::NEQ, TokenType::GT, TokenType::LT, TokenType::PLUS, TokenType::MINUS, TokenType::ASTERISK, TokenType::SLASH
                parse_infix_expression(left)
+             when TokenType::LPAREN
+               parse_call_expression(left)
              else
                throw NoParseFunctionError.new("parser has no function to parse infix token type #{@current_token.type}")
              end
@@ -235,6 +239,16 @@ class Parser
     consume_token if @peek_token.type == TokenType::SEMICOLON
 
     FunctionLiteral.new(token, parameters, body)
+  end
+  
+  def parse_call_expression(left)
+    token = left.token
+
+    function = left
+
+    arguments = parse_expressions_in_parens
+
+    CallExpression.new(token, function, arguments)
   end
 
   def parse_expressions_in_parens

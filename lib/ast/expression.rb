@@ -110,9 +110,10 @@ end
 
 class FunctionLiteral < Expression
   attr_accessor :parameters, :body
-# @param [Token] token
-# @param [[]Identifier] parameters
-# @param [BlockStatement] body
+
+  # @param [Token] token
+  # @param [[]Identifier] parameters
+  # @param [BlockStatement] body
   def initialize(token, parameters, body)
     @token = token
     @parameters = parameters
@@ -121,5 +122,22 @@ class FunctionLiteral < Expression
 
   def to_s
     "fn (#{parameters.map(:name).join(', ')}) { #{body} }"
+  end
+end
+
+class CallExpression < Expression
+  attr_accessor :function, :arguments
+
+  # @param [Token] token
+  # @param [Expression] function # FunctionLiteral or Identifier
+  # @param [[]Expression] arguments
+  def initialize(token, function, arguments)
+    @token = token
+    @function = function
+    @arguments = arguments
+  end
+
+  def to_s
+    "#{function}(#{arguments.map(&:to_s).join(', ')})"
   end
 end

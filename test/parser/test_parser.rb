@@ -233,6 +233,40 @@ class ParserTest < Minitest::Test
     test_literal_expression('z', program.statements[2].expression.parameters[2])
   end
 
+  def test_parse_call_expression
+    input = 'add(x, 2)'
+    program = parse_program(input)
+
+    assert_equal 1, program.statements.length
+
+    assert_instance_of ExpressionStatement, program.statements[0]
+    assert_instance_of CallExpression, program.statements[0].expression
+
+    call = program.statements[0].expression
+    test_literal_expression 'add', call.function
+    test_literal_expression 'x', call.arguments[0]
+    test_literal_expression 2, call.arguments[1]
+  end
+
+  def test_parse_call_expression_with_function_literal
+    input = 'fn(x, y){ x + y }(2, 3)'
+    program = parse_program(input)
+
+    assert_equal 1, program.statements.length
+
+    assert_instance_of ExpressionStatement, program.statements[0]
+    assert_instance_of CallExpression, program.statements[0].expression
+
+    call = program.statements[0].expression
+    test_literal_expression 'x', call.function.parameters[0]
+    test_literal_expression 'y', call.function.parameters[1]
+    test_infix_expression('x', '+', 'y', call.function.body.statements[0].expression)
+
+
+    test_literal_expression 2, call.arguments[0]
+    test_literal_expression 3, call.arguments[1]
+  end
+
   def test_parse_error
     input = 'let x 5;'
 
