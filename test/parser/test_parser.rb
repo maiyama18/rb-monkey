@@ -294,11 +294,11 @@ module RMonkey
 
     def test_literal_expression(expected, expression)
       case expected
-      when Integer
+      when ::Integer
         assert_equal expected, expression.value
-      when String
+      when ::String
         assert_equal expected, expression.name
-      when TrueClass, FalseClass
+      when ::TrueClass, ::FalseClass
         assert_equal expected, expression.value
       else
         raise 'unknown class in test_literal_expression'

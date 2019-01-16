@@ -7,4 +7,7 @@ module RMonkey
 
   class NoParseFunctionError < StandardError
   end
+
+  class EvalError < StandardError
+  end
 end
