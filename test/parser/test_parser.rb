@@ -191,7 +191,7 @@ class ParserTest < Minitest::Test
     assert_instance_of InfixExpression, exp.alternative.statements[0].expression
     test_infix_expression(5, '+', 6, exp.alternative.statements[0].expression)
   end
-  
+
   def test_parse_function_literal
     input = 'fn (x, y) { x + y }'
     program = parse_program(input)
@@ -210,6 +210,27 @@ class ParserTest < Minitest::Test
     assert_instance_of BlockStatement, fn_literal.body
     assert_equal 1, fn_literal.body.statements.length
     test_infix_expression('x', '+', 'y', fn_literal.body.statements[0].expression)
+  end
+
+  def test_parse_function_literal_parameters
+    input = <<~INPUT
+      fn () {};
+      fn (x) {};
+      fn (x, y, z) {};
+    INPUT
+    program = parse_program(input)
+
+    assert_equal 3, program.statements.length
+
+    assert_equal 0, program.statements[0].expression.parameters.length
+
+    assert_equal 1, program.statements[1].expression.parameters.length
+    test_literal_expression('x', program.statements[1].expression.parameters[0])
+
+    assert_equal 3, program.statements[2].expression.parameters.length
+    test_literal_expression('x', program.statements[2].expression.parameters[0])
+    test_literal_expression('y', program.statements[2].expression.parameters[1])
+    test_literal_expression('z', program.statements[2].expression.parameters[2])
   end
 
   def test_parse_error

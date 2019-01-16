@@ -227,9 +227,7 @@ class Parser
     token = @current_token
 
     expect_peek(TokenType::LPAREN)
-    consume_token
-    parameters = parse_comma_separated_expressions
-    expect_peek(TokenType::RPAREN)
+    parameters = parse_expressions_in_parens
 
     expect_peek(TokenType::LBRACE)
     body = parse_block_statement
@@ -239,8 +237,10 @@ class Parser
     FunctionLiteral.new(token, parameters, body)
   end
 
-  def parse_comma_separated_expressions
-    return [] if @peek_token.type == TokenType::RPAREN
+  def parse_expressions_in_parens
+    consume_token
+
+    return [] if @current_token.type == TokenType::RPAREN
 
     identifiers = [parse_expression(Precedence::LOWEST)]
     while @peek_token.type == TokenType::COMMA
@@ -248,6 +248,8 @@ class Parser
       consume_token
       identifiers << parse_expression(Precedence::LOWEST)
     end
+
+    expect_peek(TokenType::RPAREN)
 
     identifiers
   end
