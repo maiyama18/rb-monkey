@@ -1,8 +1,10 @@
-class ParseError < StandardError
-end
+module RMonkey
+  class ParseError < StandardError
+  end
 
-class InvalidTokenError < StandardError
-end
+  class InvalidTokenError < StandardError
+  end
 
-class NoParseFunctionError < StandardError
+  class NoParseFunctionError < StandardError
+  end
 end
