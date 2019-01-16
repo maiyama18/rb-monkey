@@ -20,9 +20,11 @@ class ParserTest < Minitest::Test
 
     assert_instance_of LetStatement, program.statements[0]
     assert_equal 'x', program.statements[0].identifier.name
+    assert_equal 5, program.statements[0].expression.value
 
     assert_instance_of LetStatement, program.statements[1]
     assert_equal 'foo', program.statements[1].identifier.name
+    assert_equal 42, program.statements[1].expression.value
   end
 
   def test_parse_return_statement
@@ -31,6 +33,7 @@ class ParserTest < Minitest::Test
 
     assert_equal 1, program.statements.length
     assert_instance_of ReturnStatement, program.statements[0]
+    assert_equal 'x', program.statements[0].expression.name
   end
 
   def test_parse_identifier_expression
@@ -259,11 +262,7 @@ class ParserTest < Minitest::Test
 
     call = program.statements[0].expression
     test_literal_expression 'x', call.function.parameters[0]
-    test_literal_expression 'y', call.function.parameters[1]
-    test_infix_expression('x', '+', 'y', call.function.body.statements[0].expression)
 
-
-    test_literal_expression 2, call.arguments[0]
     test_literal_expression 3, call.arguments[1]
   end
 

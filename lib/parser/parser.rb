@@ -100,23 +100,21 @@ class Parser
     identifier = Identifier.new(@current_token, @current_token.literal)
 
     expect_peek(TokenType::ASSIGN)
-    # TODO: parse expression
-    until @current_token.type == TokenType::SEMICOLON
-      consume_token
-    end
+    consume_token
+    expression = parse_expression(Precedence::LOWEST)
 
-    LetStatement.new(token, identifier, nil)
+    consume_token if @peek_token.type == TokenType::SEMICOLON
+    LetStatement.new(token, identifier, expression)
   end
 
   def parse_return_statement
     token = @current_token
 
-    # TODO: parse expression
-    until @current_token.type == TokenType::SEMICOLON
-      consume_token
-    end
+    consume_token
+    expression = parse_expression(Precedence::LOWEST)
 
-    ReturnStatement.new(token, nil)
+    consume_token if @peek_token.type == TokenType::SEMICOLON
+    ReturnStatement.new(token, expression)
   end
 
   def parse_expression_statement
@@ -125,7 +123,6 @@ class Parser
     expression = parse_expression(Precedence::LOWEST)
 
     consume_token if @peek_token.type == TokenType::SEMICOLON
-
     ExpressionStatement.new(token, expression)
   end
 
