@@ -16,7 +16,7 @@ class Identifier < Expression
 
   # @return [String]
   def to_s
-    @name
+    name
   end
 end
 
@@ -32,7 +32,7 @@ class IntegerLiteral < Expression
 
   # @return [String]
   def to_s
-    @value.to_s
+    value.to_s
   end
 end
 
@@ -48,7 +48,7 @@ class BooleanLiteral < Expression
 
   # @return [String]
   def to_s
-    @value.to_s
+    value.to_s
   end
 end
 
@@ -65,7 +65,7 @@ class PrefixExpression < Expression
   end
 
   def to_s
-    "(#{@operator}#{@right})"
+    "(#{operator}#{right})"
   end
 end
 
@@ -84,7 +84,7 @@ class InfixExpression < Expression
   end
 
   def to_s
-    "(#{@left} #{@operator} #{@right})"
+    "(#{left} #{operator} #{right})"
   end
 end
 
@@ -103,7 +103,23 @@ class IfExpression < Expression
   end
 
   def to_s
-    s = "if #{@condition} #{@consequence}"
-    @alternative ? s += " else #{@alternative}" : s
+    s = "if #{condition} #{consequence}"
+    alternative ? s += " else #{alternative}" : s
+  end
+end
+
+class FunctionLiteral < Expression
+  attr_accessor :parameters, :body
+# @param [Token] token
+# @param [[]Identifier] parameters
+# @param [BlockStatement] body
+  def initialize(token, parameters, body)
+    @token = token
+    @parameters = parameters
+    @body = body
+  end
+
+  def to_s
+    "fn (#{parameters.map(:name).join(', ')}) { #{body} }"
   end
 end

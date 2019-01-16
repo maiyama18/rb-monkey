@@ -13,6 +13,7 @@ module Precedence
   PREFIX = 5
   CALL = 6
 
+  # @param [TokenType] token_type
   def self.from(token_type)
     case token_type
     when TokenType::EQ, TokenType::NEQ
@@ -56,6 +57,7 @@ class Parser
     @peek_token = @lexer.next_token
   end
 
+  # @param [TokenType] type
   def expect_peek(type)
     raise ParseError.new "expect token type #{type}, but got token #{@peek_token}" if type != @peek_token.type
 
@@ -125,6 +127,7 @@ class Parser
     ExpressionStatement.new(token, expression)
   end
 
+  # @param [Precedence] precedence
   def parse_expression(precedence)
     left = case @current_token.type
            when TokenType::IDENT
@@ -139,6 +142,8 @@ class Parser
              parse_grouped_expression
            when TokenType::IF
              parse_if_expression
+           when TokenType::FN
+             parse_function_literal
            else
              throw NoParseFunctionError.new("parser has no function to parse prefix token type #{@current_token.type}")
            end
@@ -177,6 +182,7 @@ class Parser
     PrefixExpression.new(token, operator, right)
   end
 
+  # @param [Expression] left
   def parse_infix_expression(left)
     token = @current_token
     operator = @current_token.literal
@@ -212,7 +218,37 @@ class Parser
     expect_peek(TokenType::LBRACE)
     alternative = parse_block_statement
 
+    consume_token if @peek_token.type == TokenType::SEMICOLON
+
     IfExpression.new(token, condition, consequence, alternative)
   end
 
+  def parse_function_literal
+    token = @current_token
+
+    expect_peek(TokenType::LPAREN)
+    consume_token
+    parameters = parse_comma_separated_expressions
+    expect_peek(TokenType::RPAREN)
+
+    expect_peek(TokenType::LBRACE)
+    body = parse_block_statement
+
+    consume_token if @peek_token.type == TokenType::SEMICOLON
+
+    FunctionLiteral.new(token, parameters, body)
+  end
+
+  def parse_comma_separated_expressions
+    return [] if @peek_token.type == TokenType::RPAREN
+
+    identifiers = [parse_expression(Precedence::LOWEST)]
+    while @peek_token.type == TokenType::COMMA
+      consume_token
+      consume_token
+      identifiers << parse_expression(Precedence::LOWEST)
+    end
+
+    identifiers
+  end
 end

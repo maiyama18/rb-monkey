@@ -14,7 +14,7 @@ class LetStatement < Statement
   end
 
   def to_s
-    "#{@token.literal} #{@identifier} = #{@expression}"
+    "#{token.literal} #{identifier} = #{expression}"
   end
 end
 
@@ -27,7 +27,7 @@ class ReturnStatement < Statement
   end
 
   def to_s
-    "#{@token.literal} #{@expression}"
+    "#{token.literal} #{expression}"
   end
 end
 
@@ -40,7 +40,7 @@ class ExpressionStatement < Statement
   end
 
   def to_s
-    "#{@expression}"
+    "#{expression}"
   end
 end
 
@@ -53,6 +53,6 @@ class BlockStatement < Statement
   end
 
   def to_s
-    @statements.map(:to_s).join
+    statements.map(:to_s).join
   end
 end
