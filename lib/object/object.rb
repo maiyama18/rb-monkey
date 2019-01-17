@@ -13,7 +13,7 @@ module RMonkey
     end
   end
 
-  class Integer
+  class Integer < Object
     attr_accessor :value
 
     def initialize(value)
@@ -26,7 +26,7 @@ module RMonkey
     end
   end
 
-  class Boolean
+  class Boolean < Object
     attr_accessor :value
 
     def initialize(value)
@@ -39,7 +39,7 @@ module RMonkey
     end
   end
 
-  class Null
+  class Null < Object
     def initialize
       @type = ObjectType::NULL
     end

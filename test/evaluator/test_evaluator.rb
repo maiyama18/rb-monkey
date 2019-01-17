@@ -4,17 +4,36 @@ require_relative '../../lib/evaluator/evaluator'
 module RMonkey
   class EvaluatorTest < Minitest::Test
     def test_eval_integer
-      input = '42;'
-      evaluated = eval_program(input)
+      test_cases = [
+        {input: '42', expected: 42},
+        {input: '-5', expected: -5},
+        # {input: '-(-5)', expected: 5},
+      ]
 
-      assert_equal 42, evaluated.value
+      test_cases.each do |test_case|
+        evaluated = eval_program(test_case[:input])
+        assert_equal test_case[:expected], evaluated.value
+      end
     end
 
     def test_eval_boolean
       input = 'true;'
+      test_cases = [
+        {input: 'true', expected: true},
+        {input: 'false', expected: false},
+        {input: '!true', expected: false},
+        {input: '!false', expected: true},
+        {input: '!5', expected: false},
+        {input: '!!true', expected: true},
+        {input: '!!false', expected: false},
+        {input: '!!5', expected: true},
+      ]
       evaluated = eval_program(input)
 
-      assert_equal true, evaluated.value
+      test_cases.each do |test_case|
+        evaluated = eval_program(test_case[:input])
+        assert_equal test_case[:expected], evaluated.value
+      end
     end
 
     def eval_program(input)
