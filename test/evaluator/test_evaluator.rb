@@ -10,6 +10,13 @@ module RMonkey
       assert_equal 42, evaluated.value
     end
 
+    def test_eval_boolean_literal
+      input = 'true;'
+      evaluated = eval_program(input)
+
+      assert_equal true, evaluated.value
+    end
+
     def eval_program(input)
       lexer = Lexer.new(input)
       parser = Parser.new(lexer)

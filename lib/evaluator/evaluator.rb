@@ -1,7 +1,12 @@
+require_relative '../token/token'
 require_relative '../object/object'
 
 module RMonkey
   class Evaluator
+    TRUE = Boolean.new(true)
+    FALSE = Boolean.new(false)
+    NULL = Null.new
+
     class << self
       def eval(node)
         case node
@@ -11,6 +16,8 @@ module RMonkey
           eval(node.expression)
         when IntegerLiteral
           Integer.new(node.value)
+        when BooleanLiteral
+          Boolean.new(node.value)
         else
           raise EvalError.new "could not eval node #{node.type}"
         end
