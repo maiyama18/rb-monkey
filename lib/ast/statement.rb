@@ -54,7 +54,7 @@ module RMonkey
     end
 
     def to_s
-      statements.map(:to_s).join
+      statements.map(&:to_s).join
     end
   end
 end

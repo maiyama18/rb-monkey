@@ -3,6 +3,17 @@ require_relative '../../lib/lexer/lexer'
 
 module RMonkey
   class LexerTest < Minitest::Test
+    def test_lex_empty_input
+      input = ''
+      lexer = Lexer.new(input)
+
+      expected_tokens = [Token.new(TokenType::EOF, '')]
+
+      expected_tokens.each do |expected_token|
+        assert_equal expected_token, lexer.next_token
+      end
+    end
+
     def test_lex_single_char_tokens
       input = '=+-*/!><(){},;'
       lexer = Lexer.new(input)

@@ -122,7 +122,7 @@ module RMonkey
     end
 
     def to_s
-      "fn (#{parameters.map(:name).join(', ')}) { #{body} }"
+      "fn (#{parameters.map(&:name).join(', ')}) { #{body} }"
     end
   end
 
