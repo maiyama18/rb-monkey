@@ -19,7 +19,7 @@ module RMonkey
         when BooleanLiteral
           Boolean.new(node.value)
         else
-          raise EvalError.new "could not eval node #{node.type}"
+          raise EvalError.new "could not eval node #{node}"
         end
       end
 

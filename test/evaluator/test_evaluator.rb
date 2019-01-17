@@ -3,14 +3,14 @@ require_relative '../../lib/evaluator/evaluator'
 
 module RMonkey
   class EvaluatorTest < Minitest::Test
-    def test_eval_integer_literal
+    def test_eval_integer
       input = '42;'
       evaluated = eval_program(input)
 
       assert_equal 42, evaluated.value
     end
 
-    def test_eval_boolean_literal
+    def test_eval_boolean
       input = 'true;'
       evaluated = eval_program(input)
 
