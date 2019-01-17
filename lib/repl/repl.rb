@@ -1,6 +1,8 @@
-require_relative '../../lib/parser/parser'
-require_relative '../../lib/lexer/lexer'
-require_relative '../../lib/token/token'
+require_relative '../evaluator/evaluator'
+require_relative '../parser/parser'
+require_relative '../parser/parser'
+require_relative '../lexer/lexer'
+require_relative '../token/token'
 
 module RMonkey
   class Repl
@@ -15,7 +17,7 @@ module RMonkey
         parser = Parser.new(lexer)
         program = parser.parse_program
 
-        puts program.to_s
+        puts Evaluator.eval(program).to_s
       end
     end
   end
