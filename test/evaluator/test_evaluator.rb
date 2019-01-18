@@ -39,6 +39,10 @@ module RMonkey
         {input: '3 > 3', expected: false},
         {input: '3 < 4', expected: true},
         {input: '3 > 3', expected: false},
+        {input: 'true == true', expected: true},
+        {input: 'true == false', expected: false},
+        {input: 'true != true', expected: false},
+        {input: 'true != false', expected: true},
       ]
       evaluated = eval_program(input)
 

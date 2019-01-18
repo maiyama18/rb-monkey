@@ -76,6 +76,8 @@ module RMonkey
         case left
         when RMonkey::Integer
           eval_integer_infix_expression(operator, left, right)
+        when RMonkey::Boolean
+          eval_boolean_infix_expression(operator, left, right)
         else
           raise EvalError.new "unknown expression: #{left} #{operator} #{right}"
         end
@@ -99,6 +101,17 @@ module RMonkey
           left.value > right.value ? TRUE : FALSE
         when "<"
           left.value < right.value ? TRUE : FALSE
+        else
+          raise EvalError.new "unknown operator: #{operator}"
+        end
+      end
+
+      def eval_boolean_infix_expression(operator, left, right)
+        case operator
+        when "=="
+          left.value == right.value ? TRUE : FALSE
+        when "!="
+          left.value != right.value ? TRUE : FALSE
         else
           raise EvalError.new "unknown operator: #{operator}"
         end
