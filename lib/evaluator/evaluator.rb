@@ -109,9 +109,9 @@ module RMonkey
       def eval_boolean_infix_expression(operator, left, right)
         case operator
         when "=="
-          left.value == right.value ? TRUE : FALSE
+          left == right ? TRUE : FALSE
         when "!="
-          left.value != right.value ? TRUE : FALSE
+          left != right ? TRUE : FALSE
         else
           raise EvalError.new "unknown operator: #{operator}"
         end
