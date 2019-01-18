@@ -7,7 +7,11 @@ module RMonkey
       test_cases = [
         {input: '42', expected: 42},
         {input: '-5', expected: -5},
-        # {input: '-(-5)', expected: 5},
+        {input: '-(-5)', expected: 5},
+        {input: '1 + 2', expected: 3},
+        {input: '1 + 2 * 3', expected: 7},
+        {input: '(1 + 2) * 3', expected: 9},
+        {input: '1 + 2 * 3 + 4', expected: 11},
       ]
 
       test_cases.each do |test_case|

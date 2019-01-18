@@ -28,6 +28,10 @@ module RMonkey
           else
             raise EvalError.new "could not eval node #{node}"
           end
+        when InfixExpression
+          left = eval(node.left)
+          right = eval(node.right)
+          eval_infix_expression(node.operator, left, right)
         else
           raise EvalError.new "could not eval node #{node}"
         end
@@ -59,6 +63,17 @@ module RMonkey
         raise EvalError.new "'-' cannot be applied to non-integer: #{right.class}" unless right.instance_of? RMonkey::Integer
 
         Integer.new(-right.value)
+      end
+
+      def eval_infix_expression(operator, left, right)
+        raise EvalError.new "type mismatch: #{left} #{operator} #{right}" if left.type != right.type
+
+        case left.type
+        when RMonkey::INTEGER
+          eval_integer_infix_expression
+        else
+          raise EvalError.new "unknown operator: #{left} #{operator} #{right}" if left.type != right.type
+        end
       end
     end
   end
