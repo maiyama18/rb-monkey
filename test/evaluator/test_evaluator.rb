@@ -7,7 +7,11 @@ module RMonkey
       test_cases = [
         {input: '42', expected: 42},
         {input: '-5', expected: -5},
-        # {input: '-(-5)', expected: 5},
+        {input: '-(-5)', expected: 5},
+        {input: '4 + 2', expected: 6},
+        {input: '4 - 2', expected: 2},
+        {input: '4 * 2', expected: 8},
+        {input: '4 / 2', expected: 2},
       ]
 
       test_cases.each do |test_case|
@@ -27,6 +31,14 @@ module RMonkey
         {input: '!!true', expected: true},
         {input: '!!false', expected: false},
         {input: '!!5', expected: true},
+        {input: '3 == 3', expected: true},
+        {input: '3 == 4', expected: false},
+        {input: '3 != 3', expected: false},
+        {input: '3 != 4', expected: true},
+        {input: '4 > 3', expected: true},
+        {input: '3 > 3', expected: false},
+        {input: '3 < 4', expected: true},
+        {input: '3 > 3', expected: false},
       ]
       evaluated = eval_program(input)
 
