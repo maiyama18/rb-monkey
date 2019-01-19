@@ -19,7 +19,7 @@ RSpec.describe "Token#new" do
     it("should raise Exception for invalid token type #{type}") do
       expect {
         RMonkey::Token.new(type, literal)
-      }.to raise_error RMonkey::InvalidTokenError
+      }.to raise_error RMonkey::LexError
     end
   end
 end

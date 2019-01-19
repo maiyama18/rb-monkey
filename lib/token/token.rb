@@ -60,7 +60,7 @@ module RMonkey
     # @param [String] type
     # @param [String] literal
     def initialize(type, literal)
-      raise InvalidTokenError.new "invalid token type #{type}" unless TokenType.constants.map {|constant| TokenType.const_get(constant)}.include?(type)
+      raise LexError.new "invalid token type #{type}" unless TokenType.constants.map {|constant| TokenType.const_get(constant)}.include?(type)
 
       @type = type
       @literal = literal
