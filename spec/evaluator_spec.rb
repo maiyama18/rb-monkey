@@ -80,4 +80,17 @@ RSpec.describe "Evaluator::eval" do
       expect(eval_program(input).value).to eq expected
     end
   end
+
+  [
+    "1 + true",
+    "1 == true",
+    "-true",
+    "true + false",
+  ].each do |input|
+    it("should raise EvalError for input #{input}") do
+      expect {
+        eval_program(input)
+      }.to raise_error(RMonkey::EvalError)
+    end
+  end
 end
