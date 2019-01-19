@@ -8,7 +8,7 @@ def eval_program(input)
   RMonkey::Evaluator.eval(program)
 end
 
-RSpec.describe "eval integer operation" do
+RSpec.describe "Evaluator::eval" do
   [
     ['42', 42],
     ['-5', -5],
@@ -18,13 +18,11 @@ RSpec.describe "eval integer operation" do
     ['(1 + 2) * 3', 9],
     ['1 + 2 * 3 + 4', 11],
   ].each do |input, expected|
-    it("should eval #{input} to be #{expected}") do
+    it("should eval integer operation #{input}") do
       expect(eval_program(input).value).to eq expected
     end
   end
-end
 
-RSpec.describe "eval boolean operation" do
   [
     ['true', true],
     ['false', false],
@@ -47,7 +45,7 @@ RSpec.describe "eval boolean operation" do
     ['true != true', false],
     ['true != false', true],
   ].each do |input, expected|
-    it("should eval #{input} to be #{expected}") do
+    it("should eval boolean operation #{input}") do
       expect(eval_program(input).value).to eq expected
     end
   end

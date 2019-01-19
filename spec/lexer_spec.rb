@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe "lex input" do
+RSpec.describe "Lexer#next_token" do
   [
     [
       "",
@@ -116,7 +116,7 @@ RSpec.describe "lex input" do
       ]
     ]
   ].each do |input, expected_tokens|
-    it("should lex #{input} to valid tokens") do
+    it("should lex #{input}") do
       lexer = RMonkey::Lexer.new(input)
       expected_tokens.each do |expected_token|
         expect(lexer.next_token).to eq expected_token
