@@ -40,8 +40,11 @@ module RMonkey
   end
 
   class Null < Object
+    attr_reader :value
+
     def initialize
       @type = ObjectType::NULL
+      @value = nil
     end
 
     def to_s

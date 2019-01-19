@@ -49,4 +49,22 @@ RSpec.describe "Evaluator::eval" do
       expect(eval_program(input).value).to eq expected
     end
   end
+
+  [
+    ['if (true) { 10 }', 10],
+    ['if (false) { 10 }', nil],
+    ['if (false) { 10 } else { 20 }', 20],
+    ['if (10) { 10 }', 10],
+    ['if (!10) { 10 }', nil],
+    ['if (!10) { 10 } else { 20 }', 20],
+    ['if (10 > 5) { 10 }', 10],
+    ['if (10 < 5) { 10 }', nil],
+    ['if (10 < 5) { 10 } else { 20 }', 20],
+    ['if (10 == 10) { 10 }', 10],
+    ['if (10 != 5) { 10 }', 10],
+  ].each do |input, expected|
+    it("should eval if expression #{input}") do
+      expect(eval_program(input).value).to eq expected
+    end
+  end
 end

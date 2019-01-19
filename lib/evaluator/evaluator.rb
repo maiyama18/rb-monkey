@@ -12,6 +12,8 @@ module RMonkey
         case node
         when Program
           eval_statements(node.statements)
+        when BlockStatement
+          eval_statements(node.statements)
         when ExpressionStatement
           eval(node.expression)
         when IntegerLiteral
@@ -19,9 +21,11 @@ module RMonkey
         when BooleanLiteral
           node.value ? TRUE : FALSE
         when PrefixExpression
-          eval_prefix_expression(node.operator, node.right)
+          eval_prefix_expression(node)
         when InfixExpression
-          eval_infix_expression(node.operator, node.left, node.right)
+          eval_infix_expression(node)
+        when IfExpression
+          eval_if_expression(node)
         else
           raise EvalError.new "could not eval node #{node}"
         end
@@ -36,9 +40,9 @@ module RMonkey
         evaluated
       end
 
-      def eval_prefix_expression(operator, right_node)
-        right = eval(right_node)
-        case operator
+      def eval_prefix_expression(node)
+        right = eval(node.right)
+        case node.operator
         when '!'
           eval_bang_expression(right)
         when '-'
@@ -67,19 +71,19 @@ module RMonkey
         Integer.new(-right.value)
       end
 
-      def eval_infix_expression(operator, left_node, right_node)
-        left = eval(left_node)
-        right = eval(right_node)
+      def eval_infix_expression(node)
+        left = eval(node.left)
+        right = eval(node.right)
 
-        raise EvalError.new "type mismatch: #{left} #{operator} #{right}" if left.type != right.type
+        raise EvalError.new "type mismatch: #{left} #{node.operator} #{right}" if left.type != right.type
 
         case left
         when RMonkey::Integer
-          eval_integer_infix_expression(operator, left, right)
+          eval_integer_infix_expression(node.operator, left, right)
         when RMonkey::Boolean
-          eval_boolean_infix_expression(operator, left, right)
+          eval_boolean_infix_expression(node.operator, left, right)
         else
-          raise EvalError.new "unknown expression: #{left} #{operator} #{right}"
+          raise EvalError.new "unknown expression: #{left} #{node.operator} #{right}"
         end
       end
 
@@ -114,6 +118,18 @@ module RMonkey
           left != right ? TRUE : FALSE
         else
           raise EvalError.new "unknown operator: #{operator}"
+        end
+      end
+
+      def eval_if_expression(node)
+        condition = eval(node.condition)
+        case condition
+        when TRUE
+          eval(node.consequence)
+        when FALSE, NULL
+          node.alternative ? eval(node.alternative) : NULL
+        else
+          eval(node.consequence)
         end
       end
     end
