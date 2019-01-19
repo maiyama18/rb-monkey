@@ -11,11 +11,14 @@ module RMonkey
       def eval(node)
         case node
         when Program
-          eval_statements(node.statements)
+          eval_program(node)
         when BlockStatement
-          eval_statements(node.statements)
+          eval_block_statement(node)
         when ExpressionStatement
           eval(node.expression)
+        when ReturnStatement
+          object = eval(node.expression)
+          ReturnValue.new(object)
         when IntegerLiteral
           Integer.new(node.value)
         when BooleanLiteral
@@ -31,11 +34,20 @@ module RMonkey
         end
       end
 
-      # @param [[]Statement] statements
-      def eval_statements(statements)
+      def eval_program(node)
         evaluated = nil
-        statements.each do |statement|
+        node.statements.each do |statement|
           evaluated = eval(statement)
+          return evaluated.object if evaluated.type == RMonkey::ObjectType::RETURN_VALUE
+        end
+        evaluated
+      end
+
+      def eval_block_statement(node)
+        evaluated = nil
+        node.statements.each do |statement|
+          evaluated = eval(statement)
+          return evaluated if evaluated.type == RMonkey::ObjectType::RETURN_VALUE
         end
         evaluated
       end

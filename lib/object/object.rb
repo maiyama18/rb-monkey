@@ -2,6 +2,7 @@ module RMonkey
   module ObjectType
     INTEGER = 'INTEGER'
     BOOLEAN = 'BOOLEAN'
+    RETURN_VALUE = 'RETURN_VALUE'
     NULL = 'NULL'
   end
 
@@ -36,6 +37,19 @@ module RMonkey
 
     def to_s
       value.to_s
+    end
+  end
+
+  class ReturnValue < Object
+    attr_accessor :object
+
+    def initialize(object)
+      @type = ObjectType::RETURN_VALUE
+      @object = object
+    end
+    
+    def to_s
+      "return<#{@object}>"
     end
   end
 

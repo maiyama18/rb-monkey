@@ -67,4 +67,17 @@ RSpec.describe "Evaluator::eval" do
       expect(eval_program(input).value).to eq expected
     end
   end
+
+  [
+    ['return 10;', 10],
+    ['9; return 10;', 10],
+    ['return 10; 9;', 10],
+    ['if (true) { return 10; } return 9;', 10],
+    ['if (false) { return 9; } else { return 10; } return 9;', 10],
+    ['if (true) { if (true) { return 10; } return 9; } return 9;', 10],
+  ].each do |input, expected|
+    it("should eval return statement #{input}") do
+      expect(eval_program(input).value).to eq expected
+    end
+  end
 end
