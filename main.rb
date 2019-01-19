@@ -1,4 +1,4 @@
-require_relative 'repl/repl'
+require_relative 'repl/epl/repl'
 
 module RMonkey
   Repl.new.start
