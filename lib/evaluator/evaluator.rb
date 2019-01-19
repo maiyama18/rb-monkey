@@ -69,7 +69,7 @@ module RMonkey
         raise EvalError.new "type mismatch: #{left} #{operator} #{right}" if left.type != right.type
 
         case left.type
-        when RMonkey::INTEGER
+        when RMonkey::ObjectType::INTEGER
           eval_integer_infix_expression
         else
           raise EvalError.new "unknown operator: #{left} #{operator} #{right}" if left.type != right.type
