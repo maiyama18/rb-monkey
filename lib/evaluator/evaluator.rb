@@ -33,6 +33,8 @@ module RMonkey
           eval_infix_expression(node, env)
         when IfExpression
           eval_if_expression(node, env)
+        when FunctionLiteral
+          Function.new(node.parameters, node.body, env)
         else
           raise EvalError.new "could not eval node #{node}"
         end

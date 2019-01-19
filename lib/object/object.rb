@@ -3,6 +3,7 @@ module RMonkey
     INTEGER = 'INTEGER'
     BOOLEAN = 'BOOLEAN'
     RETURN_VALUE = 'RETURN_VALUE'
+    FUNCTION = 'FUNCTION'
     NULL = 'NULL'
   end
 
@@ -50,6 +51,21 @@ module RMonkey
     
     def to_s
       "return<#{@object}>"
+    end
+  end
+
+  class Function < Object
+    attr_reader :parameters, :body, :env
+
+    def initialize(parameters, body, env)
+      @type = ObjectType::FUNCTION
+      @parameters = parameters
+      @body = body
+      @env = env
+    end
+
+    def to_s
+      "fn (#{parameters.map(&:name)}) { #{body} }"
     end
   end
 

@@ -95,6 +95,17 @@ RSpec.describe "Evaluator::eval" do
   end
 
   [
+    ["fn() { 1; }", [], "1"],
+    ["fn(x, y) { x + y; }", ["x", "y"], "(x + y)"],
+  ].each do |input, expected_parameters, expected_body_string|
+    it("should eval function literal #{input}") do
+      evaluated = eval_program(input)
+      expect(evaluated.parameters.map(&:name)).to eq expected_parameters
+      expect(evaluated.body.to_s).to eq expected_body_string
+    end
+  end
+
+  [
     "1 + true",
     "1 == true",
     "-true",
