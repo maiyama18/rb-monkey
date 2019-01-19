@@ -8,52 +8,62 @@ module RMonkey
     NULL = Null.new
 
     class << self
-      def eval(node)
+      def eval(node, env)
         case node
         when Program
-          eval_program(node)
+          eval_program(node, env)
         when BlockStatement
-          eval_block_statement(node)
+          eval_block_statement(node, env)
         when ExpressionStatement
-          eval(node.expression)
+          eval(node.expression, env)
+        when LetStatement
+          eval_let_statement(node, env)
         when ReturnStatement
-          object = eval(node.expression)
+          object = eval(node.expression, env)
           ReturnValue.new(object)
         when IntegerLiteral
           Integer.new(node.value)
         when BooleanLiteral
           node.value ? TRUE : FALSE
+        when Identifier
+          env.get(node.name)
         when PrefixExpression
-          eval_prefix_expression(node)
+          eval_prefix_expression(node, env)
         when InfixExpression
-          eval_infix_expression(node)
+          eval_infix_expression(node, env)
         when IfExpression
-          eval_if_expression(node)
+          eval_if_expression(node, env)
         else
           raise EvalError.new "could not eval node #{node}"
         end
       end
 
-      def eval_program(node)
+      def eval_program(node, env)
         evaluated = nil
         node.statements.each do |statement|
-          evaluated = eval(statement)
+          evaluated = eval(statement, env)
           return evaluated.object if evaluated.type == RMonkey::ObjectType::RETURN_VALUE
         end
         evaluated
       end
 
-      def eval_block_statement(node)
+      def eval_block_statement(node, env)
         evaluated = nil
         node.statements.each do |statement|
-          evaluated = eval(statement)
+          evaluated = eval(statement, env)
           return evaluated if evaluated.type == RMonkey::ObjectType::RETURN_VALUE
         end
         evaluated
       end
 
-      def eval_prefix_expression(node)
-        right = eval(node.right)
+      def eval_let_statement(node, env)
+        name = node.identifier.name
+        value = eval(node.expression, env)
+        env.set(name, value)
+      end
+
+      def eval_prefix_expression(node, env)
+        right = eval(node.right, env)
         case node.operator
         when '!'
           eval_bang_expression(right)
@@ -83,9 +93,9 @@ module RMonkey
         Integer.new(-right.value)
       end
 
-      def eval_infix_expression(node)
-        left = eval(node.left)
-        right = eval(node.right)
+      def eval_infix_expression(node, env)
+        left = eval(node.left, env)
+        right = eval(node.right, env)
 
         raise EvalError.new "type mismatch: #{left} #{node.operator} #{right}" if left.type != right.type
 
@@ -133,15 +143,15 @@ module RMonkey
         end
       end
 
-      def eval_if_expression(node)
-        condition = eval(node.condition)
+      def eval_if_expression(node, env)
+        condition = eval(node.condition, env)
         case condition
         when TRUE
-          eval(node.consequence)
+          eval(node.consequence, env)
         when FALSE, NULL
-          node.alternative ? eval(node.alternative) : NULL
+          node.alternative ? eval(node.alternative, env) : NULL
         else
-          eval(node.consequence)
+          eval(node.consequence, env)
         end
       end
     end

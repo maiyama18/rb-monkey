@@ -4,8 +4,9 @@ def eval_program(input)
   lexer = RMonkey::Lexer.new(input)
   parser = RMonkey::Parser.new(lexer)
   program = parser.parse_program
+  env = RMonkey::Environment.new
 
-  RMonkey::Evaluator.eval(program)
+  RMonkey::Evaluator.eval(program, env)
 end
 
 RSpec.describe "Evaluator::eval" do
@@ -82,15 +83,38 @@ RSpec.describe "Evaluator::eval" do
   end
 
   [
+    ["let a = 5; a;", 5],
+    ["let a = 5; a + 10;", 15],
+    ["let a = 5; a * a;", 25],
+    ["let a = 5; let b = a; b;", 5],
+    ["let a = 5; let b = a; let c = a * b; c;", 25],
+  ].each do |input, expected|
+    it("should eval assigned variable with let statement: #{input}") do
+      expect(eval_program(input).value).to eq expected
+    end
+  end
+
+  [
     "1 + true",
     "1 == true",
     "-true",
     "true + false",
   ].each do |input|
-    it("should raise EvalError for input #{input}") do
+    it("should raise EvalError for input #{input}: invalid operation") do
       expect {
         eval_program(input)
       }.to raise_error(RMonkey::EvalError)
     end
   end
+
+  [
+    "foo;",
+    "5 + foo;",
+  ].each do |input|
+  it("should raise EvalError for input #{input}: undefined variable") do
+    expect {
+      eval_program(input)
+    }.to raise_error(RMonkey::EvalError)
+  end
+end
 end

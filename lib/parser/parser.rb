@@ -145,7 +145,7 @@ module RMonkey
              when TokenType::FN
                parse_function_literal
              else
-               throw NoParseFunctionError.new("parser has no function to parse prefix token type #{@current_token.type}")
+               raise NoParseFunctionError.new("parser has no function to parse prefix token type #{@current_token.type}")
              end
 
       while precedence < peek_precedence
@@ -156,7 +156,7 @@ module RMonkey
                when TokenType::LPAREN
                  parse_call_expression(left)
                else
-                 throw NoParseFunctionError.new("parser has no function to parse infix token type #{@current_token.type}")
+                 raise NoParseFunctionError.new "parser has no function to parse infix token type #{@current_token.type}"
                end
       end
 
