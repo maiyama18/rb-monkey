@@ -106,6 +106,19 @@ RSpec.describe "Evaluator::eval" do
   end
 
   [
+    ["let five = fn() { 5; }; five();", 5],
+    ["let identity = fn(x) { x; }; identity(5);", 5],
+    ["fn(x) { x; }(5);", 5],
+    ["let add = fn(x, y) { x + y; }; add(2, 3);", 5],
+    ["let add = fn(x, y) { x + y; }; let a = 2; let b = 3; add(a, b);", 5],
+    ["let add = fn(x, y) { x + y; }; add(add(1, 1), add(1, 2));", 5],
+  ].each do |input, expected|
+    it("should eval function call #{input}") do
+      expect(eval_program(input).value).to eq expected
+    end
+  end
+
+  [
     "1 + true",
     "1 == true",
     "-true",

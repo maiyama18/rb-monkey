@@ -35,6 +35,8 @@ module RMonkey
           eval_if_expression(node, env)
         when FunctionLiteral
           Function.new(node.parameters, node.body, env)
+        when CallExpression
+          eval_call_expression(node, env)
         else
           raise EvalError.new "could not eval node #{node}"
         end
@@ -155,6 +157,21 @@ module RMonkey
         else
           eval(node.consequence, env)
         end
+      end
+
+      def eval_call_expression(node, env)
+        function = eval(node.function, env)
+        arguments = node.arguments.map { |arg| eval(arg, env) }
+        if function.parameters.length != arguments.length
+          raise EvalError.new "number of arguments for #{node.function} wrong. expected: #{function.parameters.length} got: #{arguments.length}"
+        end
+
+        extended_env = function.env.extend
+        function.parameters.zip(arguments).each do |param, arg|
+          extended_env.set(param.name, arg)
+        end
+
+        eval(function.body, extended_env)
       end
     end
   end
