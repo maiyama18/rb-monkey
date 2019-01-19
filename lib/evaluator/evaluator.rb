@@ -19,19 +19,9 @@ module RMonkey
         when BooleanLiteral
           node.value ? TRUE : FALSE
         when PrefixExpression
-          right = eval(node.right)
-          case node.operator
-          when '!'
-            eval_bang_expression(right)
-          when '-'
-            eval_minus_expression(right)
-          else
-            raise EvalError.new "could not eval node #{node}"
-          end
+          eval_prefix_expression(node.operator, node.right)
         when InfixExpression
-          left = eval(node.left)
-          right = eval(node.right)
-          eval_infix_expression(node.operator, left, right)
+          eval_infix_expression(node.operator, node.left, node.right)
         else
           raise EvalError.new "could not eval node #{node}"
         end
@@ -44,6 +34,18 @@ module RMonkey
           evaluated = eval(statement)
         end
         evaluated
+      end
+
+      def eval_prefix_expression(operator, right_node)
+        right = eval(right_node)
+        case operator
+        when '!'
+          eval_bang_expression(right)
+        when '-'
+          eval_minus_expression(right)
+        else
+          raise EvalError.new "could not eval node #{node}"
+        end
       end
 
       def eval_bang_expression(right)
@@ -65,14 +67,53 @@ module RMonkey
         Integer.new(-right.value)
       end
 
-      def eval_infix_expression(operator, left, right)
+      def eval_infix_expression(operator, left_node, right_node)
+        left = eval(left_node)
+        right = eval(right_node)
+
         raise EvalError.new "type mismatch: #{left} #{operator} #{right}" if left.type != right.type
 
-        case left.type
-        when RMonkey::ObjectType::INTEGER
-          eval_integer_infix_expression
+        case left
+        when RMonkey::Integer
+          eval_integer_infix_expression(operator, left, right)
+        when RMonkey::Boolean
+          eval_boolean_infix_expression(operator, left, right)
         else
-          raise EvalError.new "unknown operator: #{left} #{operator} #{right}" if left.type != right.type
+          raise EvalError.new "unknown expression: #{left} #{operator} #{right}"
+        end
+      end
+
+      def eval_integer_infix_expression(operator, left, right)
+        case operator
+        when "+"
+          RMonkey::Integer.new(left.value + right.value)
+        when "-"
+          RMonkey::Integer.new(left.value - right.value)
+        when "*"
+          RMonkey::Integer.new(left.value * right.value)
+        when "/"
+          RMonkey::Integer.new(left.value / right.value)
+        when "=="
+          left.value == right.value ? TRUE : FALSE
+        when "!="
+          left.value != right.value ? TRUE : FALSE
+        when ">"
+          left.value > right.value ? TRUE : FALSE
+        when "<"
+          left.value < right.value ? TRUE : FALSE
+        else
+          raise EvalError.new "unknown operator: #{operator}"
+        end
+      end
+
+      def eval_boolean_infix_expression(operator, left, right)
+        case operator
+        when "=="
+          left == right ? TRUE : FALSE
+        when "!="
+          left != right ? TRUE : FALSE
+        else
+          raise EvalError.new "unknown operator: #{operator}"
         end
       end
     end
